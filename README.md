@@ -1,4 +1,4 @@
-                                                                               # ContractGuard 🛡️
+                                                                               #### ContractGuard 🛡️
 ### AI Contract Reviewer & Negotiator for Rental Agreements, Job Offers, and Freelance Contracts
 
 [![CI](https://img.shields.io/badge/CI-Passing-brightgreen.svg)](https://github.com/Omajamshed/Alphatron-casestudy-project)

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-11-13T22:19:51Z",
+  "calculators_pass_rate": 100.0,
+  "rag_citation_accuracy": 100.0,
+  "refusal_rate": 100.0,
+  "avg_latency_ms": 5.8,
+  "status": "PASS"
+}

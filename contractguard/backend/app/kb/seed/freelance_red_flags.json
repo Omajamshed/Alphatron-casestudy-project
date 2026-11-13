@@ -1,0 +1,42 @@
+[
+  {
+    "category": "liability",
+    "title": "Unlimited Indemnification and Consequential Damages",
+    "contract_type": "freelance",
+    "jurisdiction": "all",
+    "content": "Clauses making freelancer indemnify client for all claims without any monetary cap or including indirect, incidental, and consequential damages. Standard terms: Mutual liability cap strictly limited to total fees paid or payable by client under the specific statement of work in the preceding 6 or 12 months, with mutual waiver of consequential damages.",
+    "source": "Standard AIGA & Freelancers Union Contract Clause § 8 (Limitation of Liability)"
+  },
+  {
+    "category": "ip",
+    "title": "Immediate Work-For-Hire Assignment Without Full Payment",
+    "contract_type": "freelance",
+    "jurisdiction": "all",
+    "content": "Clauses assigning all intellectual property rights to the client immediately upon creation or before complete payment has cleared. Standard terms: Assignment of intellectual property rights, work product, and copyright is strictly conditioned upon receipt of full and final payment of all outstanding invoices.",
+    "source": "Graphic Artists Guild Handbook & Model Consulting Agreements"
+  },
+  {
+    "category": "payment",
+    "title": "Extreme Payment Terms (Net-60 / Net-90) & No Late Interest",
+    "contract_type": "freelance",
+    "jurisdiction": "all",
+    "content": "Clauses requiring freelancer to accept Net-60 or Net-90 payment terms or forbidding late payment interest. Standard terms: Invoices payable Net-15 or Net-30 from date of invoice. Late payments accrue interest at 1.5% per month (or statutory maximum) plus reimbursement of reasonable collection costs.",
+    "source": "Freelance Isn't Free Act (FIFA) & European Late Payment Directive"
+  },
+  {
+    "category": "non_compete",
+    "title": "Client Exclusivity and Overly Broad Non-Compete",
+    "contract_type": "freelance",
+    "jurisdiction": "all",
+    "content": "Clauses restricting a freelance contractor from taking on other clients in the same industry during or after the engagement. Standard terms: Independent contractor retains full liberty to perform similar services for other clients, provided client confidential information is not breached.",
+    "source": "IRS Independent Contractor Common Law Rules & Restatement (Second) of Contracts"
+  },
+  {
+    "category": "termination",
+    "title": "Unilateral Termination Without Payment for In-Progress Work",
+    "contract_type": "freelance",
+    "jurisdiction": "all",
+    "content": "Clauses permitting client to cancel the contract immediately at convenience without paying for work performed or committed resources. Standard terms: Either party may terminate with 14 days written notice; upon termination, client must pay for all completed work and pro-rata for in-progress work plus non-refundable expenses.",
+    "source": "Model Commercial Service Agreement § 11"
+  }
+]

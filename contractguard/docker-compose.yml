@@ -1,0 +1,49 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: contractguard_db
+    restart: always
+    environment:
+      POSTGRES_DB: contractguard
+      POSTGRES_USER: contractguard
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: contractguard_api
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql+psycopg://contractguard:password@db:5432/contractguard
+      LLM_PROVIDER: ${LLM_PROVIDER:-gemini}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-gemini-2.5-flash}
+      EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2
+      JWT_SECRET: ${JWT_SECRET:-change_me_super_secret_key_2026}
+      SIMILARITY_THRESHOLD: 0.35
+      MAX_UPLOAD_MB: 15
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/uploads:/app/uploads
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: contractguard_web
+    restart: always
+    depends_on:
+      - api
+    ports:
+      - "5173:80"
+
+volumes:
+  postgres_data:

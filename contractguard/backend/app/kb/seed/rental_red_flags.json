@@ -1,0 +1,50 @@
+[
+  {
+    "category": "rent_increase",
+    "title": "Unrestricted Rent Escalation",
+    "contract_type": "rental",
+    "jurisdiction": "all",
+    "content": "Clauses allowing landlord to increase rent unilaterally at any time or without minimum 60 days advance written notice are dangerous red flags. Standard terms should cap annual rent increases at the local CPI or maximum 3% to 5%, requiring at least 60 days written notice prior to the end of the term.",
+    "source": "Uniform Residential Landlord and Tenant Act (URLTA) § 1.403; National Tenant Rights Guidelines"
+  },
+  {
+    "category": "deposit",
+    "title": "Unfair Security Deposit Forfeiture & Long Return Windows",
+    "contract_type": "rental",
+    "jurisdiction": "all",
+    "content": "Clauses allowing landlord more than 30 days to return security deposits or charging automatic non-refundable cleaning fees violate standard tenant protections. Standard term: Security deposit must be returned within 14 to 30 days of move-out with a fully itemized statement and copies of actual repair invoices for damage exceeding normal wear and tear.",
+    "source": "State Tenancy Codes & Restatement of Property (Landlord & Tenant) § 12.1"
+  },
+  {
+    "category": "termination",
+    "title": "Auto-Renewal Trap and Asymmetric Notice",
+    "contract_type": "rental",
+    "jurisdiction": "all",
+    "content": "Clauses stating the lease automatically renews for another full year unless tenant gives notice 60 to 90 days before expiration. Standard terms: Upon lease expiration, the tenancy converts to month-to-month, terminable by either party with 30 days notice.",
+    "source": "Standard Realtor Model Residential Lease § 4"
+  },
+  {
+    "category": "entry",
+    "title": "Landlord Entry Without Advance Notice",
+    "contract_type": "rental",
+    "jurisdiction": "all",
+    "content": "Clauses allowing the landlord or their agents to enter the premises at any time without advance written notification. Standard term: Landlord must give at least 24 to 48 hours advance written notice of entry during reasonable business hours, except in case of verified emergency threatening life or property.",
+    "source": "URLTA § 3.103 - Access and Notice of Entry"
+  },
+  {
+    "category": "maintenance",
+    "title": "Imposing Habitability & Structural Repairs on Tenant",
+    "contract_type": "rental",
+    "jurisdiction": "all",
+    "content": "Clauses shifting costs of major appliance, roof, plumbing, HVAC, or electrical maintenance to the tenant (e.g. 'tenant pays first $200 of all repairs'). Standard terms: Landlord warrants implied habitability and is solely responsible for maintaining all structural, heating, cooling, and plumbing systems in good working order at landlord's expense.",
+    "source": "Implied Warranty of Habitability Doctrine; Javins v. First National Realty Corp."
+  },
+  {
+    "category": "late_fees",
+    "title": "Excessive or Compounding Daily Late Fees",
+    "contract_type": "rental",
+    "jurisdiction": "all",
+    "content": "Late fees that exceed 5% of monthly rent or accumulate daily charges (e.g. $50/day). Standard terms: Maximum 5% late fee assessed only after a minimum 5-day grace period past the due date.",
+    "source": "Consumer Financial Protection / URLTA Standard Guidelines"
+  }
+]

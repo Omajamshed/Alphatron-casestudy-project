@@ -1,0 +1,34 @@
+[
+  {
+    "category": "non_compete",
+    "title": "Post-Employment Non-Compete and Broad Non-Solicitation",
+    "contract_type": "employment",
+    "jurisdiction": "all",
+    "content": "Clauses barring employee from working in the entire industry or for competitors for 1 to 2 years post termination. Standard terms: Non-compete must be narrowly tailored to protect trade secrets, limited to direct competitors in a 25-mile radius for no more than 6 months, accompanied by garden leave pay, or void where prohibited by law.",
+    "source": "FTC Non-Compete Rule Standard & California Business and Professions Code § 16600"
+  },
+  {
+    "category": "ip",
+    "title": "Universal Invention Assignment (Moonlighting IP Grab)",
+    "contract_type": "employment",
+    "jurisdiction": "all",
+    "content": "Clauses claiming employer ownership over all inventions, software, and concepts conceived by the employee at any time, including off-hours on personal equipment without company resources. Standard terms: Explicit statutory carve-out for inventions created entirely on employee's own time without company equipment, supplies, facility, or trade secrets.",
+    "source": "California Labor Code § 2870 / Washington RCW 49.44.140 Inventions Exemption"
+  },
+  {
+    "category": "clawback",
+    "title": "Harsh Bonus & Relocation Clawback Provisions",
+    "contract_type": "employment",
+    "jurisdiction": "all",
+    "content": "Clauses demanding 100% repayment of signing bonuses or relocation expenses if employment ends within 24 months, even if terminated by the employer without cause. Standard terms: Repayment obligations apply only to voluntary resignation without good reason within 12 months, and amortize pro-rata monthly at 1/12th per month of service.",
+    "source": "Society for Human Resource Management (SHRM) Standard Retention Agreements"
+  },
+  {
+    "category": "termination",
+    "title": "Asymmetric Notice Period or Indefinite Probation",
+    "contract_type": "employment",
+    "jurisdiction": "all",
+    "content": "Clauses requiring employee to give 60-90 days notice while employer can terminate immediately without severance, or probationary period extending beyond 90 days. Standard terms: Mutual notice periods (e.g. 2 weeks or 30 days) and standard statutory severance if terminated without cause.",
+    "source": "Model Employment Standards Act Guidelines"
+  }
+]

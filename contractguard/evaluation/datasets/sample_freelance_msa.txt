@@ -1,0 +1,20 @@
+MASTER SERVICES AGREEMENT (FREELANCE)
+
+1. ENGAGEMENT AND TERM.
+This Master Services Agreement is executed on February 1, 2026, by and between Apex Media Inc. ("Client") and Sarah Jenkins ("Contractor"). The term shall commence on February 1, 2026 and expire on August 1, 2026.
+
+2. PAYMENT TERMS.
+Section 2.1 Invoicing and Net-90: Contractor shall submit monthly invoices. Client shall make payment on Net-90 payment terms from invoice approval date.
+Section 2.2 Late Payments: No interest or late fees shall accrue on overdue payments.
+
+3. INTELLECTUAL PROPERTY RIGHTS.
+Section 3.1 Work for Hire and Immediate Assignment: Contractor hereby irrevocably assigns all intellectual property rights, copyrights, patents, and work product to Client immediately upon creation, prior to and regardless of receipt of payment.
+
+4. INDEMNIFICATION AND UNLIMITED LIABILITY.
+Section 4.1 Contractor Indemnity: Contractor agrees to defend and indemnify Client, its officers and directors, with unlimited liability against any and all claims, damages, liabilities, or losses of any nature arising from the services.
+
+5. NON-COMPETE AND CLIENT EXCLUSIVITY.
+Section 5.1 Post-Contract Restriction: During the term and for a period of two (2) years following termination, Contractor shall not directly or indirectly provide consulting services to any entity in the technology, marketing, or digital media industries.
+
+6. TERMINATION.
+Section 6.1 Termination for Convenience: Client may terminate this Agreement immediately at any time without advance notice and without obligation to pay for in-progress milestones.

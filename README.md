@@ -61,7 +61,7 @@ All screenshots below are generated from high-resolution UI captures located in 
 ### 1. Central Contract Dashboard
 View all analyzed agreements, overall risk health scores, critical alerts, and instant upload triggers.
 
-![ContractGuard Dashboard](docs/screenshots/dashboard.png)
+![Dashboard Screenshot](./contractguard/docs/screenshots/dashboard.png)
 
 *Key Highlights:*
 - Real-time risk distribution gauges (Safe, Low, Medium, High, Critical).

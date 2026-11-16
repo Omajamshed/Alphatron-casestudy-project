@@ -543,7 +543,27 @@ git push origin main
 ```
 
 ---
+## 👩‍💻 Author & Project Details
+
+| Detail | Information |
+| :--- | :--- |
+| **Project** | ContractGuard: AI-Powered Contract Reviewer & Negotiator |
+| **Developed by** | **Oma Jamshed** |
+| **GitHub** | [@Omajamshed](https://github.com/Omajamshed) |
+| **Organization** | Alphatron Technology, Research & Artificial Intelligence Engineering Division |
+| **Founder** | Alina Baber |
+| **Program** | BSCS IV (Bachelor of Science in Computer Science, Year 4) |
+| **Department** | Department of Computer Science (UBIT) |
+| **Institution** | University of Karachi |
+| **Version** | 1.0.0 Production Release |
+| **Submission Date** | November 2026 | 
+
+<p align="center">
+  Built by <b>Oma Jamshed</b> · BSCS IV, UBIT, University of Karachi · Alphatron Technology
+</p>
 
 ## 📄 License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+© 2026 Oma Jamshed. All rights reserved under the terms of the MIT License.

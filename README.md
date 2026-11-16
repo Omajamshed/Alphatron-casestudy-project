@@ -558,9 +558,9 @@ git push origin main
 | **Version** | 1.0.0 Production Release |
 | **Submission Date** | November 2026 | 
 
-<p align="center">
+<div  align="center">
   Built by <b>Oma Jamshed</b> · BSCS IV, UBIT, University of Karachi · Alphatron Technology
-</p>
+</div>
 
 ## 📄 License
 

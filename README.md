@@ -181,25 +181,22 @@ ContractGuard is built as a decoupled, modern cloud-ready application:
 ---
 
 ## 🔄 LangGraph Human-in-the-Loop Workflow
-
-The negotiation workflow is implemented using **LangGraph** (`langgraph.graph.StateGraph`):
-
 ```mermaid
 flowchart TD
-    Start([Upload Contract]) --> ExtractClauses[1. extract_clauses\nChunk into numbered clauses]
-    ExtractClauses --> ClassifyRisk[2. classify_risk\nRun deterministic rules + LLM risk tag]
-    ClassifyRisk --> RetrieveKB[3. retrieve_standard_terms\nMatch red-flags against curated KB]
-    RetrieveKB --> DraftCounter[4. draft_counter_clauses\nGenerate protective balanced wording]
-    DraftCounter --> Validate[5. validate\nCheck format & quality]
-    
-    Validate --> CheckValid{Validation\nPassed?}
-    CheckValid -- No (Retry < 2) --> DraftCounter
-    CheckValid -- Yes --> HumanReview[6. human_review\n⏸️ interrupt() pauses execution]
-    
-    HumanReview --> DecisionPad{{User Approval in UI:\nApprove / Edit / Reject}}
-    DecisionPad --> ResumeRun[Resume with Command]
-    ResumeRun --> ExportNode[7. export_node\nCompile approved changes only]
-    ExportNode --> Done([Ready for Email / PDF Export])
+    Start(["Upload Contract"]) --> ExtractClauses["1. extract_clauses<br/>Chunk into numbered clauses"]
+    ExtractClauses --> ClassifyRisk["2. classify_risk<br/>Run deterministic rules + LLM risk tag"]
+    ClassifyRisk --> RetrieveKB["3. retrieve_standard_terms<br/>Match red-flags against curated KB"]
+    RetrieveKB --> DraftCounter["4. draft_counter_clauses<br/>Generate protective balanced wording"]
+    DraftCounter --> Validate["5. validate<br/>Check format and quality"]
+
+    Validate --> CheckValid{"Validation<br/>Passed?"}
+    CheckValid -- "No (Retry under 2)" --> DraftCounter
+    CheckValid -- "Yes" --> HumanReview["6. human_review<br/>interrupt() pauses execution"]
+
+    HumanReview --> DecisionPad{{"User Approval in UI:<br/>Approve / Edit / Reject"}}
+    DecisionPad --> ResumeRun["Resume with Command"]
+    ResumeRun --> ExportNode["7. export_node<br/>Compile approved changes only"]
+    ExportNode --> Done(["Ready for Email / PDF Export"])
 
     classDef agent fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
     classDef pause fill:#7c2d12,stroke:#f97316,stroke-width:2px,color:#fed7aa;
@@ -208,7 +205,6 @@ flowchart TD
     class HumanReview pause;
     class Done finish;
 ```
-
 ---
 
 ## 🧮 Deterministic Rule Engine

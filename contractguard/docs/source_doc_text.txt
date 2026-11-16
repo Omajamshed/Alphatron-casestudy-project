@@ -1,0 +1,860 @@
+
+=== PAGE 1 ===
+ContractGuard: End-to-End Project
+Documentation
+AI contract reviewer for rental agreements, job offers and freelance contracts. Stack:
+React, FastAPI, RAG, LangGraph, PostgreSQL with pgvector.
+1. Overview
+1.1 Problem
+People sign rental agreements, job offers and freelance contracts without understanding
+what they are agreeing to. Risky clauses (unlimited liability, one-sided termination, auto-
+renewal, heavy penalties, IP grabs) are buried in dense legal language, and professional
+legal review is expensive.
+1.2 Solution
+ContractGuard reads an uploaded contract, finds and classifies each clause, flags the
+risky ones against a red-flag knowledge base, computes the exact dates and money
+exposure with plain code, and proposes safer replacement wording. The user reviews and
+approves each suggested change, and only then does the app generate a negotiation
+email and a downloadable report.
+1.3 Design principle
+Code does the maths, the AI does the language. Date extraction, notice-period
+deadlines, penalty exposure and risk scoring run in deterministic Python so results are
+exact and testable. The LLM is used only to classify clause meaning, explain risk in plain
+language, and draft counter-clauses. This is the same principle used in CampusPilot.
+1.4 Goals and non-goals
+Goals
+Non-goals
+Explain a contract in plain language with
+citations
+Giving legal advice or replacing a lawyer
+Flag risky clauses with a reason and a severity
+Guaranteeing legal enforceability
+Compute deadlines, renewal dates and penalty
+exposure exactly
+Supporting every jurisdiction on day one
+ContractGuard: End-to-End Project Documentation
+Page 1 of 19
+
+=== PAGE 2 ===
+Every screen and every export carries the notice: ContractGuard is an informational tool,
+not legal advice.
+2. Users and user stories
+Core user stories:
+1. As a user, I upload a contract PDF and see its clauses listed with a risk level.
+2. As a user, I ask Can the landlord raise rent during the term? and get an answer citing
+[file, clause, page] .
+3. As a user, I see key dates and amounts (start, end, notice deadline, late fee, deposit)
+calculated for me.
+4. As a user, I review each suggested counter-clause and accept, edit or reject it.
+5. As a user, I generate a negotiation email containing only the changes I approved.
+6. As a user, I upload a revised contract version and see how the risk score changed.
+3. Feature modules
+Goals
+Non-goals
+Draft counter-clauses the user approves one by
+one
+Auto-sending emails without approval
+Keep a history of contracts and risk scores
+e-signature or contract storage as a
+product
+Persona
+Need
+Tenant
+Understand deposit, rent increase, notice and
+eviction clauses before signing
+Freelancer
+Check payment terms, IP ownership, scope creep,
+liability and termination
+Job seeker
+Check non-compete, notice period, probation and
+bonus clauses
+Module
+What it does
+Contract Upload and Parsing
+Accepts PDF or DOCX, extracts text with page
+numbers, splits into clauses
+ContractGuard: End-to-End Project Documentation
+Page 2 of 19
+
+=== PAGE 3 ===
+4. System architecture
++------------------+   REST + SSE    +---------------------------------------
+--+
+|  React + Vite    | <-------------> |              FastAPI                    
+|
+|  (TypeScript)    |                 |  routes: contracts, chat, analysis,     
+|
++------------------+                 |  agent, exports, history, usage         
+|
+                                     +--------+-----------+-----------+------
+--+
+                                              |           |           |
+                          +-------------------+   +-------+------+   +-+-----
+-----------+
+                          | Ingestion + RAG   |   | Rule engine  |   | 
+LangGraph review |
+                          | parse, clause     |   | dates, money,|   | agent 
++ Postgres |
+                          | split, embed,     |   | penalties,   |   | 
+checkpointer     |
+                          | retrieve, cite    |   | risk score   |   +-------
+Module
+What it does
+Clause Explorer
+Lists every clause with type, plain-language
+summary and risk level
+Contract Q&A (RAG)
+Answers from the contract and the red-flag
+knowledge base only, with citations, and refuses
+anything outside them
+Key Terms and Deadlines
+Rule-based extraction of dates, amounts and
+notice periods, with computed deadlines
+Risk Analysis
+Per-clause severity, weighted contract risk score,
+and score history across versions
+Review Agent (LangGraph)
+Drafts counter-clauses and pauses for per-change
+human approval
+Negotiation Export
+Email draft and PDF or DOCX report of approved
+changes
+History and Usage
+Past reviews, decisions, token counts, latency and
+estimated cost
+ContractGuard: End-to-End Project Documentation
+Page 3 of 19
+
+=== PAGE 4 ===
+-+---------+
+                          +---------+---------+   +-------+------+            
+|
+                                    |                     |                   
+|
+                                    +----------+----------+------------------
+-+
+                                               v
+                              +--------------------------------+      +------
+------+
+                              | PostgreSQL + pgvector          |      |  LLM 
+API   |
+                              | users, contracts, clauses,     |      | 
+(Gemini or |
+                              | embeddings, findings, runs     |      |  
+Claude)   |
+                              +--------------------------------+      +------
+------+
+4.1 Tech stack
+Layer
+Technology
+Frontend
+React, Vite, TypeScript, React Router, TanStack
+Query, plain CSS or Tailwind
+Backend
+FastAPI, Pydantic v2, SQLAlchemy 2, Alembic,
+Uvicorn
+Agent orchestration
+LangGraph (conditional edges, interrupt ,
+Postgres checkpointer)
+LLM
+Gemini or Claude, selected in .env , wrapped
+behind one llm_client interface
+Retrieval
+sentence-transformers ( all-MiniLM-L6-v2 or a
+multilingual model), pgvector cosine search
+Documents
+pdfplumber or pypdf for PDF, python-docx for
+DOCX, optional Tesseract OCR for scans
+Dates and money
+dateparser , python-dateutil ,
+decimal.Decimal
+Auth
+JWT (FastAPI) with per-user data isolation
+ContractGuard: End-to-End Project Documentation
+Page 4 of 19
+
+=== PAGE 5 ===
+5. Data model (PostgreSQL)
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+CREATE TABLE contracts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  contract_type TEXT CHECK (contract_type IN 
+('rental','freelance','employment','other')),
+  party_role TEXT,                  -- 'tenant', 'freelancer', 'employee' ...
+  jurisdiction TEXT,
+  current_version INT DEFAULT 1,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+CREATE TABLE contract_versions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  contract_id UUID REFERENCES contracts(id) ON DELETE CASCADE,
+  version INT NOT NULL,
+  filename TEXT, page_count INT,
+  risk_score NUMERIC(5,2),
+  uploaded_at TIMESTAMPTZ DEFAULT now(),
+  UNIQUE (contract_id, version)
+);
+CREATE TABLE clauses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  version_id UUID REFERENCES contract_versions(id) ON DELETE CASCADE,
+  clause_no TEXT,                   -- '7.2' or 'Section 4'
+  heading TEXT,
+Layer
+Technology
+Export
+reportlab or weasyprint for PDF, python-docx
+for DOCX
+Infra
+Docker Compose (api, web, db), GitHub Actions CI
+ContractGuard: End-to-End Project Documentation
+Page 5 of 19
+
+=== PAGE 6 ===
+  text TEXT NOT NULL,
+  page_start INT, page_end INT,
+  clause_type TEXT,                 -- termination, payment, liability, ip, 
+...
+  summary TEXT,
+  embedding VECTOR(384)
+);
+CREATE INDEX ON clauses USING hnsw (embedding vector_cosine_ops);
+CREATE TABLE key_terms (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  version_id UUID REFERENCES contract_versions(id) ON DELETE CASCADE,
+  clause_id UUID REFERENCES clauses(id),
+  kind TEXT,                        -- start_date, end_date, notice_period, 
+late_fee, deposit ...
+  raw_text TEXT,
+  value_number NUMERIC(14,2), value_unit TEXT,
+  value_date DATE,
+  computed JSONB                    -- deadlines, exposure, formula used
+);
+CREATE TABLE findings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  version_id UUID REFERENCES contract_versions(id) ON DELETE CASCADE,
+  clause_id UUID REFERENCES clauses(id),
+  severity TEXT CHECK (severity IN ('low','medium','high','critical')),
+  category TEXT,
+  reason TEXT,
+  standard_term_ref UUID,           -- kb_documents.id
+  score NUMERIC(5,2)
+);
+CREATE TABLE suggestions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  finding_id UUID REFERENCES findings(id) ON DELETE CASCADE,
+  run_id UUID,
+  original_text TEXT,
+  proposed_text TEXT,
+  rationale TEXT,
+  status TEXT DEFAULT 'pending'     -- pending, approved, edited, rejected
+    CHECK (status IN ('pending','approved','edited','rejected')),
+  final_text TEXT,
+  decided_at TIMESTAMPTZ
+);
+CREATE TABLE kb_documents (          -- red-flag and standard-terms knowledge 
+ContractGuard: End-to-End Project Documentation
+Page 6 of 19
+
+=== PAGE 7 ===
+base
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  contract_type TEXT, jurisdiction TEXT,
+  category TEXT, title TEXT,
+  content TEXT, source TEXT,
+  embedding VECTOR(384)
+);
+CREATE TABLE agent_runs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  version_id UUID REFERENCES contract_versions(id),
+  thread_id TEXT UNIQUE,
+  status TEXT,                      -- running, awaiting_review, completed, 
+failed
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+CREATE TABLE exports (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  run_id UUID REFERENCES agent_runs(id),
+  kind TEXT,                        -- email, pdf, docx
+  content TEXT, file_path TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+CREATE TABLE usage_logs (
+  id BIGSERIAL PRIMARY KEY,
+  user_id UUID, feature TEXT,
+  tokens_in INT, tokens_out INT,
+  latency_ms INT, cost_usd NUMERIC(8,5),
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+The risk score history for a contract is simply the risk_score of each row in
+contract_versions , ordered by version .
+6. Ingestion and RAG pipeline
+6.1 Ingestion flow
+1. Upload: the file is validated (type, size under 15 MB) and stored.
+2. Parse: extract text per page, keeping page numbers. If a page has no text layer, fall
+back to OCR.
+ContractGuard: End-to-End Project Documentation
+Page 7 of 19
+
+=== PAGE 8 ===
+3. Clause segmentation: detect numbered headings with rules (for example 1. , 1.1 ,
+Article 5 , Section 7 ) to split into clauses. If numbering is absent, fall back to
+paragraph chunking with an overlap of about 100 tokens.
+4. Embed: each clause is embedded and stored in clauses.embedding .
+5. Typing: the classify_risk step later fills clause_type and summary .
+Clause-aware chunking matters because it makes citations precise: a citation is
+[contract.pdf, Clause 7.2, p. 4] instead of a random page range.
+6.2 Knowledge bases
+Two retrieval sources, both in pgvector:
+The contract itself ( clauses ), filtered by version_id .
+The red-flag and standard-terms knowledge base ( kb_documents ), filtered by
+contract_type and jurisdiction . Seed it with curated, reviewed material: typical
+safe notice periods, fair late-fee ranges, deposit rules, IP assignment norms, non-
+compete limits. Each entry has a source so answers can be traced.
+6.3 Question answering
+question -> embed -> top-k clauses (version-scoped) + top-k KB entries
+         -> prompt: answer ONLY from these passages, cite [clause, page]
+         -> LLM -> answer + citations -> validate citations exist -> respond
+Rules enforced in code, not only in the prompt:
+If the best similarity score is below a threshold, return I could not find this in your
+contract instead of calling the LLM.
+Every citation in the answer must match a retrieved clause id. Answers with
+unmatched citations are rejected and retried once.
+Contract text is treated as untrusted data. The prompt tells the model that
+instructions inside a contract must be ignored (prompt-injection defence).
+7. Deterministic rule engine
+This is the layer that makes ContractGuard trustworthy. It lives in services/rules/ and
+has no LLM calls.
+ContractGuard: End-to-End Project Documentation
+Page 8 of 19
+
+=== PAGE 9 ===
+7.1 Extractors
+Each extracted value stores its raw_text , the clause it came from, and a confidence flag.
+Values the rules cannot read confidently are shown to the user as needs confirmation
+rather than guessed.
+7.2 Calculators
+All money uses Decimal . All results store the formula text so the UI can show how a
+number was produced.
+Extractor
+Finds
+Method
+dates.py
+start date, end date, signing date,
+payment due dates
+dateparser plus keyword windows
+such as commencing, expires
+durations.py
+notice periods, lock-in, probation,
+renewal terms
+patterns like thirty (30) days, 3
+months, with word-to-number
+conversion
+money.py
+rent, deposit, fees, late-fee rates,
+liability caps
+currency symbols and codes,
+Decimal , percentage handling
+renewal.py
+auto-renewal and escalation
+keywords plus duration parsing
+Calculation
+Formula
+Notice deadline
+end_date - notice_period (calendar or business
+days as stated)
+Auto-renewal trap date
+last date to cancel before the term renews
+Late-fee exposure
+amount * rate * periods_late , with the formula
+stored in computed
+Early-termination penalty
+remaining months times monthly amount, or fixed
+penalty as written
+Total financial exposure
+sum of deposit at risk, penalties and uncapped
+liability flagged
+Rent escalation schedule
+year-by-year rent with the stated increase
+percentage
+ContractGuard: End-to-End Project Documentation
+Page 9 of 19
+
+=== PAGE 10 ===
+7.3 Risk scoring
+Each finding gets a score from severity (low 1, medium 3, high 6, critical 10). The contract
+score is a weighted sum normalized to 0 to 100, where categories like liability and
+termination carry higher weights for the user's role. The weights live in a versioned config
+file so the score is reproducible and unit-testable. The LLM may suggest a severity, but
+the final number always comes from this table plus the rules (for example, an uncapped
+liability clause is forced to critical).
+8. LangGraph review agent
+8.1 Workflow
+START -> extract_clauses -> classify_risk --(no findings)--> END (low risk 
+summary)
+                                |
+                                v
+                    retrieve_standard_terms
+                                |
+                                v
+                    draft_counter_clauses <----+
+                                |              | retry once
+                                v              |
+                            validate ----------+
+                                |
+                                v
+                          human_review  (interrupt, one suggestion at a time)
+                                |
+                                v
+                              export -> END
+ContractGuard: End-to-End Project Documentation
+Page 10 of 19
+
+=== PAGE 11 ===
+8.2 State
+class ReviewState(TypedDict, total=False):
+    version_id: str
+    party_role: str            # tenant, freelancer, employee
+    contract_type: str
+    clauses: list              # parsed clause records
+    key_terms: list            # rule-engine output
+    findings: list             # severity, category, reason, clause_id
+    standard_terms: dict       # finding_id -> retrieved KB passages
+    suggestions: list          # proposed counter-clauses
+    attempt: int
+    problems: list             # validation problems
+    decisions: dict            # suggestion_id -> approve/edit/reject + 
+final_text
+    route: str
+    export_ids: list
+8.3 Nodes
+Node
+Type
+Responsibility
+extract_clauses
+code
+Load clauses, run the rule engine, save
+key_terms
+classify_risk
+LLM plus
+rules
+Label each clause type, propose severity,
+apply forced-severity rules, compute the
+score. Routes to END if no medium or higher
+findings
+retrieve_standard_terms
+RAG
+For each finding fetch the best matching
+standard terms from the KB
+draft_counter_clauses
+LLM
+Write replacement wording per finding,
+grounded in the retrieved standard terms, in
+the user's favour but reasonable
+validate
+code
+Check every suggestion: references a real
+clause, does not change a protected value
+without flagging it, no new numbers that are
+not in the KB or the original, length limits.
+Failures route back to
+draft_counter_clauses once
+ContractGuard: End-to-End Project Documentation
+Page 11 of 19
+
+=== PAGE 12 ===
+8.4 Human-in-the-loop with checkpointing
+The graph is compiled with a Postgres checkpointer so state survives restarts. The
+human_review node calls interrupt(...) with the list of pending suggestions. The API
+marks the run awaiting_review . When the user submits decisions, the API resumes the
+same thread_id with Command(resume=decisions) .
+def human_review(state):
+    decisions = interrupt({'suggestions': state['suggestions']})
+    return {'decisions': decisions}
+graph = builder.compile(checkpointer=PostgresSaver(conn))
+# start
+graph.invoke({'version_id': vid}, config={'configurable': {'thread_id': 
+tid}})
+# resume after user review
+graph.invoke(Command(resume=decisions), config={'configurable': {'thread_id': 
+tid}})
+Safety rules:
+Nothing is exported unless at least one suggestion is approved or edited.
+Rejected suggestions never appear in any output.
+The original contract text is never modified. Suggestions are stored separately and
+shown as a diff.
+9. API specification
+All routes are under /api/v1 and require a JWT except /auth .
+Node
+Type
+Responsibility
+human_review
+interrupt
+Pauses the graph and returns pending
+suggestions. Resumes with the user's
+decisions
+export
+code plus
+LLM
+Builds the negotiation email and report from
+approved or edited suggestions only
+Method
+Route
+Purpose
+POST
+/auth/register , /auth/login
+Account and token
+ContractGuard: End-to-End Project Documentation
+Page 12 of 19
+
+=== PAGE 13 ===
+Example chat response:
+{
+  'answer': 'Yes. Clause 7.2 allows the landlord to raise rent with 30 days 
+notice.',
+  'citations': [{'file': 'lease.pdf', 'clause': '7.2', 'page': 4}],
+  'tokens': {'in': 1820, 'out': 96},
+  'seconds': 2.1
+}
+Method
+Route
+Purpose
+POST
+/contracts
+Upload contract (multipart), returns contract
+id and ingestion status
+GET
+/contracts
+List the user's contracts with latest risk
+score
+GET
+/contracts/{id}
+Contract detail and versions
+POST
+/contracts/{id}/versions
+Upload a revised version
+GET
+/versions/{vid}/clauses
+Clauses with type, summary and risk
+GET
+/versions/{vid}/key-terms
+Extracted terms and computed deadlines
+GET
+/versions/{vid}/risk
+Score, findings and category breakdown
+GET
+/contracts/{id}/risk-
+history
+Score per version for the trend chart
+POST
+/versions/{vid}/chat
+RAG question, returns answer, citations,
+tokens and latency (SSE streaming optional)
+POST
+/versions/{vid}/review
+Start the agent, returns run_id and status
+GET
+/review/{run_id}
+Status and pending suggestions
+POST
+/review/{run_id}/decisions
+Submit approve, edit or reject per suggestion
+and resume the agent
+GET
+/review/{run_id}/exports
+Email draft and report download links
+GET
+/usage and /history
+Token, cost and past activity
+DELETE
+/contracts/{id}
+Delete contract and all derived data
+ContractGuard: End-to-End Project Documentation
+Page 13 of 19
+
+=== PAGE 14 ===
+10. Frontend (React)
+UI rules: severity is never shown by colour alone (use icons and labels), every number
+from the rule engine has a how was this calculated popover, and the legal disclaimer is
+always visible in the footer.
+11. Project structure
+contractguard/
+├── docker-compose.yml
+├── .env.example
+├── README.md
+├── backend/
+│   ├── alembic/                      # migrations
+│   └── app/
+│       ├── main.py
+Page
+Contents
+Dashboard
+Contract cards with type, risk badge, next
+deadline, quick upload
+Upload
+Drag and drop, choose contract type and your role,
+ingestion progress
+Contract Overview
+Risk score gauge, category breakdown, key dates
+timeline, exposure total
+Clause Explorer
+Clause list with colour-coded severity, side-by-side
+original text and plain-language summary
+Ask the Contract
+Chat with citation chips that scroll the PDF viewer
+to the clause
+Review and Negotiate
+One card per suggestion showing original,
+proposed, rationale, with Approve, Edit and Reject
+buttons. A progress bar shows how many are
+decided
+Export
+Email preview, copy button, PDF and DOCX
+download
+Version Compare
+Risk score trend and clause-level diff between
+versions
+History and Usage
+Past reviews and cost table
+ContractGuard: End-to-End Project Documentation
+Page 14 of 19
+
+=== PAGE 15 ===
+│       ├── core/                     # config, security, logging
+│       ├── db/                       # session, models/, repositories/
+│       ├── schemas/                  # Pydantic models
+│       ├── api/routes/               # auth, contracts, chat, risk, review, 
+exports, usage
+│       ├── services/
+│       │   ├── ingestion/            # parser, ocr, clause_splitter, 
+embedder
+│       │   ├── rag/                  # retriever, prompts, 
+citation_validator
+│       │   ├── rules/                # dates, durations, money, calculators, 
+risk_scoring
+│       │   ├── llm/                  # llm_client, usage_tracker
+│       │   └── export/               # email_builder, pdf_report, 
+docx_report
+│       ├── agents/
+│       │   ├── state.py
+│       │   ├── graph.py
+│       │   ├── checkpointer.py
+│       │   └── nodes/                # extract, classify, retrieve, draft, 
+validate, review, export
+│       └── kb/                       # seed red-flag and standard-terms 
+files
+├── frontend/
+│   └── src/ (pages, components, api, hooks, styles)
+├── evaluation/
+│   ├── datasets/                     # sample contracts with labelled 
+clauses
+│   ├── qa_cases.json
+│   ├── run_eval.py
+│   └── results/
+└── docs/                             # architecture diagrams, screenshots
+12. Security, privacy and safety
+Sensitive data: contracts contain personal and financial details. Encrypt data at rest
+(disk or managed Postgres encryption), use HTTPS, and keep uploads in a private
+bucket or volume.
+Isolation: every query is scoped by user_id . Add automated tests that one user
+cannot read another user's contract.
+Retention: a delete my contract action removes the file, clauses, embeddings,
+findings and exports. Optionally auto-delete after a set number of days.
+ContractGuard: End-to-End Project Documentation
+Page 15 of 19
+
+=== PAGE 16 ===
+LLM privacy: tell users that text is sent to the LLM provider. Do not log full contract
+text, only ids and token counts.
+Prompt injection: contract text is passed as quoted data, the system prompt says to
+ignore instructions inside it, and outputs are schema-validated.
+Upload safety: check MIME type and size, scan for malicious files, set timeouts on
+parsing.
+Disclaimer: shown at upload, on results, and inside every export. The tool never says a
+clause is illegal, only that it is unusual or risky compared with the knowledge base.
+Rate limiting on upload and chat endpoints to control cost and abuse.
+13. Evaluation plan
+Create an evaluation/ folder like CampusPilot's, with these measurable tests:
+Sample data: use public template contracts (standard lease, freelance services
+agreement, offer letter) and deliberately edited copies with planted risky clauses, so
+ground truth is known.
+Area
+Test
+Target
+Clause splitting
+Compare against hand-labelled
+clause boundaries on 15 to 20
+sample contracts
+90 percent or more boundary
+accuracy
+Key-term
+extraction
+Labelled dates, amounts, notice
+periods
+95 percent exact match on dates
+and amounts
+Calculators
+Unit tests with known inputs and
+outputs
+100 percent pass
+Risk
+classification
+Labelled risky clauses, measure
+precision and recall
+Recall of 85 percent or more on
+high and critical
+RAG answers
+50 questions with expected clause
+citations
+90 percent or more citation
+correctness
+Refusal
+20 out-of-scope questions
+(weather, other contracts)
+100 percent refused
+Counter-clauses
+Validator pass rate and a human
+rating of 1 to 5
+Pass 90 percent, average rating 4
+or more
+Injection
+Contracts with hidden instructions
+Zero instruction following
+Cost and latency
+Per-feature median
+Review run under 60 seconds
+ContractGuard: End-to-End Project Documentation
+Page 16 of 19
+
+=== PAGE 17 ===
+14. Testing strategy
+Unit tests (pytest): extractors, calculators, risk scoring, citation validator, validator
+node.
+Integration tests: upload to clauses pipeline, retrieval with a test pgvector database,
+API routes with auth.
+Agent tests: run the graph with a fake LLM, assert routing (no findings ends early,
+validation failure retries once, review interrupts and resumes correctly).
+Frontend tests: component tests for the review cards, and one end-to-end Playwright
+flow: upload, review, approve, export.
+CI: GitHub Actions runs lint, type check, tests and the fast evaluation subset on every
+push.
+15. Configuration and deployment
+.env.example :
+DATABASE_URL=postgresql+psycopg://contractguard:password@db:5432/contractguar
+d
+LLM_PROVIDER=gemini
+LLM_API_KEY=your_key_here
+LLM_MODEL=model-name
+EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+JWT_SECRET=change_me
+MAX_UPLOAD_MB=15
+SIMILARITY_THRESHOLD=0.35
+Docker Compose runs three services: db (Postgres with pgvector image), api (FastAPI)
+and web (React build served by Nginx or Vite in development). Run migrations with
+alembic upgrade head and seed the knowledge base with python -m app.kb.seed .
+For hosting, a simple path is: frontend on Vercel or Netlify, backend on Render, Railway or
+Fly.io, database on Neon or Supabase (both support pgvector). Embedding models are
+heavy for tiny servers, so either use a hosted embedding API or pick a small model.
+16. Build plan
+Phase
+Weeks
+Deliverables
+1. Foundations
+1
+Repo, Docker Compose, Postgres with pgvector,
+auth, upload endpoint, DB migrations
+ContractGuard: End-to-End Project Documentation
+Page 17 of 19
+
+=== PAGE 18 ===
+A realistic total is 8 to 10 weeks part-time. For a fast MVP, do phases 1, 2, 4 and a reduced 6
+first (rental contracts only, English only).
+17. Risks and mitigations
+Phase
+Weeks
+Deliverables
+2. Ingestion
+1 to 2
+PDF parsing, clause splitter, embeddings, Clause
+Explorer page
+3. Rule engine
+2
+Date, duration and money extractors, calculators,
+unit tests, Key Terms page
+4. RAG Q&A
+1 to 2
+Retriever, citation validator, refusal logic, chat page,
+knowledge base seed v1
+5. Risk analysis
+1
+Classification, scoring config, risk dashboard,
+version history
+6. Review agent
+2
+LangGraph graph, Postgres checkpointer, interrupt
+and resume, Review page
+7. Export
+1
+Email builder, PDF and DOCX report
+8. Hardening
+1 to 2
+Evaluation suite, security tests, usage tracking,
+README with screenshots, demo video
+Risk
+Mitigation
+Users treat output as legal advice
+Prominent disclaimers, neutral wording,
+suggest a lawyer for critical findings
+LLM hallucinated clauses or citations
+Citation validator, answer only from retrieved
+passages, refusal threshold
+Wrong date or amount extraction
+Rule engine with confidence flags and a user
+confirmation step
+Poor PDF parsing (scans, tables, two
+columns)
+OCR fallback, layout-aware parser, manual text
+paste option
+Knowledge base quality
+Curated and reviewed entries with sources,
+versioned, reviewed by a legal-literate person
+Jurisdiction differences
+Start with one contract type and region, store
+jurisdiction on KB entries, warn when not
+covered
+ContractGuard: End-to-End Project Documentation
+Page 18 of 19
+
+=== PAGE 19 ===
+18. Future enhancements
+Multilingual contracts and bilingual explanations.
+Clause library the user can save and reuse for their own contracts.
+Redline view that applies approved changes into an editable DOCX with tracked
+changes.
+Side-by-side comparison of two competing offers.
+Calendar export of deadlines (ICS) and reminder emails before notice dates.
+Browser extension to review contracts shown on web pages.
+Role-based sharing so a tenant can share a review with a friend or advisor.
+19. Suggested README summary (for GitHub)
+ContractGuard reads your contract, flags the risky clauses, calculates the exact
+dates and money involved, and drafts safer wording that you approve one change at a
+time. Code does the maths, AI does the language, and nothing is sent without your
+approval. Built with React, FastAPI, LangGraph, pgvector and RAG. Informational tool,
+not legal advice.
+Risk
+Mitigation
+Privacy breach
+Encryption, per-user isolation, deletion, no
+contract text in logs
+LLM cost
+Cache classification per clause hash, limit
+chunk size, usage dashboard
+ContractGuard: End-to-End Project Documentation
+Page 19 of 19

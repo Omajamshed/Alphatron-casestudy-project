@@ -9,6 +9,7 @@
 [![React 19](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com/)
 [![LangGraph](https://img.shields.io/badge/LangGraph-0.2+-orange.svg)](https://langchain-ai.github.io/langgraph/)
+[![Vercel Deployment](https://img.shields.io/badge/Deploy%20on-Vercel-black?logo=vercel)](contractguard/docs/VERCEL_DEPLOYMENT.md)
 
 > **ContractGuard** reads your agreement, flags predatory clauses, calculates exact deadlines and financial exposure using deterministic code, and drafts safer counter-proposals that you approve one change at a time.
 >
@@ -348,6 +349,26 @@ docker compose up -d --build
 - **Web Frontend:** [http://localhost:5173](http://localhost:5173)
 - **FastAPI Backend:** [http://localhost:8000](http://localhost:8000)
 - **Postgres Database:** `localhost:5432`
+
+---
+
+### Option 3: Vercel Cloud Deployment (Production Ready)
+
+ContractGuard is pre-configured for 1-click cloud deployment on **Vercel** with full client-side SPA routing (`vercel.json`), asset caching, and security headers:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Omajamshed/Alphatron-casestudy-project)
+
+1. **Deploy Frontend on Vercel:**
+   - Connect your GitHub repository to [vercel.com](https://vercel.com).
+   - Set **Root Directory** to `contractguard/frontend` (or keep root).
+   - Add environment variable: `VITE_API_BASE_URL=https://your-backend-api.com` (if connecting to an external backend).
+   - Click **Deploy**!
+2. **Deploy via Vercel CLI:**
+   ```bash
+   cd contractguard/frontend
+   vercel --prod
+   ```
+📖 *See the comprehensive [Vercel Deployment Guide](contractguard/docs/VERCEL_DEPLOYMENT.md) for fullstack serverless, Railway/Render pairing, and troubleshooting.*
 
 ---
 

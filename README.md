@@ -57,6 +57,71 @@
    Exports a ready-to-send counter-offer email, a professional ReportLab PDF summary report, and an editable Word (.docx) redline document containing only approved counter-proposals.
 
 ---
+## 📂 Project Structure
+
+```text
+Alphatron-casestudy-project/
+└── contractguard/
+    ├── backend/                          # FastAPI application (Python 3.11+)
+    │   ├── app/
+    │   │   ├── main.py                   # App entry point, middleware, router registration
+    │   │   ├── api/                      # REST routes under /api/v1
+    │   │   │   ├── auth.py               # /auth/register, /auth/login
+    │   │   │   ├── contracts.py          # /contracts upload, list, detail, clauses
+    │   │   │   ├── chat.py               # /chat/message (grounded RAG Q&A)
+    │   │   │   ├── review.py             # /review/{id}/start, /resume
+    │   │   │   ├── exports.py            # /exports email, pdf, docx
+    │   │   │   └── usage.py              # /usage/summary
+    │   │   ├── core/                     # Config, JWT and password hashing, security headers
+    │   │   │   └── logging.py            # Zero-contract-text logging middleware
+    │   │   ├── db/                       # Models, sessions, repositories (SQLite / PostgreSQL + pgvector)
+    │   │   ├── services/
+    │   │   │   ├── ingestion/            # PDF/DOCX parsing, validation, clause segmentation
+    │   │   │   ├── rules/                # Deterministic rule engine
+    │   │   │   │   ├── dates.py          # Date formats and keyword-window search
+    │   │   │   │   ├── durations.py      # "sixty (60) days" to number normalization
+    │   │   │   │   ├── money.py          # Decimal currency extraction, uncapped liability
+    │   │   │   │   ├── renewal.py        # Auto-renewal terms and notice windows
+    │   │   │   │   ├── calculators.py    # Notice, late fee, penalty, exposure formulas
+    │   │   │   │   └── risk_scoring.py   # Role-calibrated 0-100 score, forced severity
+    │   │   │   ├── rag/                  # Embeddings, retriever, citation validator, refusal guard
+    │   │   │   ├── agent/                # LangGraph review agent (7 nodes, interrupt/resume)
+    │   │   │   └── exports/              # Email, ReportLab PDF and DOCX redline generators
+    │   │   └── kb/
+    │   │       └── seed.py               # Seeds red-flag knowledge base
+    │   ├── tests/                        # Pytest suite (22 tests)
+    │   │   ├── test_dates.py
+    │   │   ├── test_durations.py
+    │   │   ├── test_money.py
+    │   │   ├── test_calculators.py
+    │   │   ├── test_risk_scoring.py
+    │   │   ├── test_citation_validator.py
+    │   │   ├── test_upload_pipeline.py
+    │   │   ├── test_isolation.py
+    │   │   └── test_graph_routing.py
+    │   └── requirements.txt
+    │
+    ├── frontend/                         # React 19 + TypeScript + Vite
+    │   ├── src/                          # Pages, components, hooks, API client
+    │   │   └── pages/                    # Dashboard, Upload, Contract Overview, Clause Explorer,
+    │   │                                 # Ask Contract, Review & Negotiate, Exports, History,
+    │   │                                 # Version Compare, Usage & Cost
+    │   ├── public/
+    │   ├── package.json
+    │   └── vercel.json                   # SPA routing, caching and security headers
+    │
+    ├── evaluation/
+    │   └── run_eval.py                   # Benchmark: calculators, RAG citations, refusals
+    │
+    ├── docs/
+    │   ├── screenshots/                  # UI captures used in this README
+    │   └── VERCEL_DEPLOYMENT.md
+    │
+    ├── docker-compose.yml                # PostgreSQL + pgvector + FastAPI + Nginx
+    ├── .env.example
+    ├── LICENSE
+    └── README.md
+```
 
 ## 🖼️ Application Screenshots & UI Tour
 

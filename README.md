@@ -22,19 +22,38 @@
 
 ---
 
-## 📑 Table of Contents
-- [🌟 Key Innovations](#-key-innovations)
-- [🖼️ Application Screenshots & UI Tour](#️-application-screenshots--ui-tour)
-- [🏗️ System Architecture](#️-system-architecture)
-- [🔄 LangGraph Human-in-the-Loop Workflow](#-langgraph-human-in-the-loop-workflow)
-- [🧮 Deterministic Rule Engine](#-deterministic-rule-engine)
-- [📚 Grounded RAG & Strict Citation Engine](#-grounded-rag--strict-citation-engine)
-- [🚀 Quickstart & Setup Guide](#-quickstart--setup-guide)
-- [🧪 Testing & Benchmark Evaluation](#-testing--benchmark-evaluation)
-- [📡 API Endpoint Reference](#-api-endpoint-reference)
-- [🔒 Security, Isolation & Privacy](#-security-isolation--privacy)
-- [📤 Pushing to GitHub](#-pushing-to-github)
-- [📄 License](#-license)
+## Table of Contents
+
+1. [Overview](#contractguard-)
+   - [Core Design Principle](#contractguard-)
+   - [Legal Disclaimer](#contractguard-)
+2. [Key Innovations](#-key-innovations)
+3. [Application Screenshots & UI Tour](#️-application-screenshots--ui-tour)
+   - [Central Contract Dashboard](#1-central-contract-dashboard)
+   - [Contract Overview & Financial Exposure Breakdown](#2-contract-overview--financial-exposure-breakdown)
+   - [Clause Explorer with Categorized Severity Badges](#3-clause-explorer-with-categorized-severity-badges)
+   - [Grounded RAG Contract Q&A with Strict Citations](#4-grounded-rag-contract-qa-with-strict-citations)
+   - [LangGraph Human-in-the-Loop Review & Counter-Drafting](#5-langgraph-human-in-the-loop-review--counter-drafting)
+   - [Negotiation Counter-Offer Email & Executive Reports](#6-negotiation-counter-offer-email--executive-reports)
+   - [End-to-End System Architecture Diagram](#7-end-to-end-system-architecture-diagram)
+4. [System Architecture](#️-system-architecture)
+5. [LangGraph Human-in-the-Loop Workflow](#-langgraph-human-in-the-loop-workflow)
+6. [Deterministic Rule Engine](#-deterministic-rule-engine)
+7. [Grounded RAG & Strict Citation Engine](#-grounded-rag--strict-citation-engine)
+8. [Quickstart & Setup Guide](#-quickstart--setup-guide)
+   - [Prerequisites](#prerequisites)
+   - [Step 1: Clone the Repository](#step-1-clone-the-repository)
+   - [Step 2: Setup and Start the Backend](#step-2-setup-and-start-the-backend)
+   - [Step 3: Setup and Start the Frontend](#step-3-setup-and-start-the-frontend)
+   - [Option 2: Full Docker Compose Deployment](#option-2-full-docker-compose-deployment)
+   - [Option 3: Vercel Cloud Deployment](#option-3-vercel-cloud-deployment-production-ready)
+9. [Testing & Benchmark Evaluation](#-testing--benchmark-evaluation)
+   - [Pytest Unit & Integration Tests](#1-pytest-unit--integration-tests-22-passed)
+   - [Automated Evaluation Benchmark Harness](#2-automated-evaluation-benchmark-harness)
+10. [API Endpoint Reference](#-api-endpoint-reference)
+11. [Security, Isolation & Privacy](#-security-isolation--privacy)
+12. [Pushing to GitHub](#-pushing-to-github)
+13. [License](#-license)
 
 ---
 

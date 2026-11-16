@@ -22,38 +22,22 @@
 
 ---
 
-## Table of Contents
+## 📑 Table of Contents
 
-1. [Overview](#contractguard-)
-   - [Core Design Principle](#contractguard-)
-   - [Legal Disclaimer](#contractguard-)
-2. [Key Innovations](#-key-innovations)
-3. [Application Screenshots & UI Tour](#️-application-screenshots--ui-tour)
-   - [Central Contract Dashboard](#1-central-contract-dashboard)
-   - [Contract Overview & Financial Exposure Breakdown](#2-contract-overview--financial-exposure-breakdown)
-   - [Clause Explorer with Categorized Severity Badges](#3-clause-explorer-with-categorized-severity-badges)
-   - [Grounded RAG Contract Q&A with Strict Citations](#4-grounded-rag-contract-qa-with-strict-citations)
-   - [LangGraph Human-in-the-Loop Review & Counter-Drafting](#5-langgraph-human-in-the-loop-review--counter-drafting)
-   - [Negotiation Counter-Offer Email & Executive Reports](#6-negotiation-counter-offer-email--executive-reports)
-   - [End-to-End System Architecture Diagram](#7-end-to-end-system-architecture-diagram)
-4. [System Architecture](#️-system-architecture)
-5. [LangGraph Human-in-the-Loop Workflow](#-langgraph-human-in-the-loop-workflow)
-6. [Deterministic Rule Engine](#-deterministic-rule-engine)
-7. [Grounded RAG & Strict Citation Engine](#-grounded-rag--strict-citation-engine)
-8. [Quickstart & Setup Guide](#-quickstart--setup-guide)
-   - [Prerequisites](#prerequisites)
-   - [Step 1: Clone the Repository](#step-1-clone-the-repository)
-   - [Step 2: Setup and Start the Backend](#step-2-setup-and-start-the-backend)
-   - [Step 3: Setup and Start the Frontend](#step-3-setup-and-start-the-frontend)
-   - [Option 2: Full Docker Compose Deployment](#option-2-full-docker-compose-deployment)
-   - [Option 3: Vercel Cloud Deployment](#option-3-vercel-cloud-deployment-production-ready)
-9. [Testing & Benchmark Evaluation](#-testing--benchmark-evaluation)
-   - [Pytest Unit & Integration Tests](#1-pytest-unit--integration-tests-22-passed)
-   - [Automated Evaluation Benchmark Harness](#2-automated-evaluation-benchmark-harness)
-10. [API Endpoint Reference](#-api-endpoint-reference)
-11. [Security, Isolation & Privacy](#-security-isolation--privacy)
-12. [Pushing to GitHub](#-pushing-to-github)
-13. [License](#-license)
+| Section | What it covers |
+| :--- | :--- |
+| [🌟 Key Innovations](#-key-innovations) | Zero-hallucination calculators, LangGraph human-in-the-loop agent, grounded RAG with verified citations, and role-calibrated risk scoring. |
+| [🖼️ Screenshots & UI Tour](#️-application-screenshots--ui-tour) | Seven-screen walkthrough: dashboard, contract overview, clause explorer, RAG Q&A, review and negotiate, exports, and architecture diagram. |
+| [🏗️ System Architecture](#️-system-architecture) | How the React frontend, FastAPI backend, deterministic engine, RAG pipeline and LangGraph agent fit together. |
+| [🔄 LangGraph Workflow](#-langgraph-human-in-the-loop-workflow) | The 7-node review state machine with `interrupt()` checkpointing and resume on user approval. |
+| [🧮 Deterministic Rule Engine](#-deterministic-rule-engine) | Notice deadlines, auto-renewal traps, late fees, termination penalties and risk scoring, all computed in code. |
+| [📚 Grounded RAG & Citations](#-grounded-rag--strict-citation-engine) | Retrieval flow, citation validation and the strict out-of-scope refusal guard. |
+| [🚀 Quickstart & Setup](#-quickstart--setup-guide) | Local setup (SQLite), Docker Compose (PostgreSQL + pgvector) and one-click Vercel deployment. |
+| [🧪 Testing & Evaluation](#-testing--benchmark-evaluation) | 22 pytest tests plus the benchmark harness covering calculators, RAG accuracy and refusals. |
+| [📡 API Reference](#-api-endpoint-reference) | All auth, contract, chat, review, export and usage endpoints in one table. |
+| [🔒 Security & Privacy](#-security-isolation--privacy) | User isolation, untrusted-document handling, log hygiene and hard-delete compliance. |
+| [📤 Pushing to GitHub](#-pushing-to-github) | Commands to commit and push the project. |
+| [📄 License](#-license) | MIT License details. |
 
 ---
 

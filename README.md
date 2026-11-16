@@ -1,4 +1,4 @@
-# ContractGuard 🛡️
+### ContractGuard 🛡️
 ### AI Contract Reviewer & Negotiator for Rental Agreements, Job Offers, and Freelance Contracts
 
 [![CI](https://img.shields.io/badge/CI-Passing-brightgreen.svg)](https://github.com/Omajamshed/Alphatron-casestudy-project)
@@ -62,7 +62,7 @@ All screenshots below are generated from high-resolution UI captures located in 
 ### 1. Central Contract Dashboard
 View all analyzed agreements, overall risk health scores, critical alerts, and instant upload triggers.
 
-![ContractGuard Dashboard](docs/screenshots/dashboard.png)
+![Dashboard Screenshot](./contractguard/docs/screenshots/dashboard.png)
 
 *Key Highlights:*
 - Real-time risk distribution gauges (Safe, Low, Medium, High, Critical).
@@ -74,7 +74,7 @@ View all analyzed agreements, overall risk health scores, critical alerts, and i
 ### 2. Contract Overview & Financial Exposure Breakdown
 Get an executive summary of key contract metadata, extracted financial terms, and deadline chronologies.
 
-![Contract Overview](docs/screenshots/contract_overview.png)
+![Contract Overview](./contractguard/docs/screenshots/contract_overview.png)
 
 *Key Highlights:*
 - **Role-Calibrated Risk Gauge:** Visually calibrated for Tenant, Freelancer, or Employee perspectives.
@@ -86,7 +86,7 @@ Get an executive summary of key contract metadata, extracted financial terms, an
 ### 3. Clause Explorer with Categorized Severity Badges
 Explore segmented contract clauses tagged with categorized severity labels, explanatory findings, and red-flag knowledge-base matches.
 
-![Clause Explorer](docs/screenshots/clause_explorer.png)
+![Clause Explorer](./contractguard/docs/screenshots/clause_explorer.png)
 
 *Key Highlights:*
 - Dynamic clause filtering by severity: **Critical**, **High**, **Medium**, **Low**, and **Safe**.
@@ -98,7 +98,7 @@ Explore segmented contract clauses tagged with categorized severity labels, expl
 ### 4. Grounded RAG Contract Q&A with Strict Citations
 Ask any natural-language question about your contract and receive answers grounded strictly in retrieved text with verifiable clause citations.
 
-![Grounded RAG Contract Q&A](docs/screenshots/ask_contract_rag.png)
+![Grounded RAG Contract Q&A](./contractguard/docs/screenshots/ask_contract_rag.png)
 
 *Key Highlights:*
 - Direct clickable citation pills (e.g. `[Clause 14.1, Page 6]`).
@@ -110,7 +110,7 @@ Ask any natural-language question about your contract and receive answers ground
 ### 5. LangGraph Human-in-the-Loop Review & Counter-Drafting
 Review AI-generated counter-proposals with interactive human-in-the-loop decisions.
 
-![Review and Negotiate](docs/screenshots/review_and_negotiate.png)
+![Review and Negotiate](./contractguard/docs/screenshots/review_and_negotiate.png)
 
 *Key Highlights:*
 - Interactive decision buttons: **Approve**, **Custom Edit**, or **Reject**.
@@ -122,7 +122,7 @@ Review AI-generated counter-proposals with interactive human-in-the-loop decisio
 ### 6. Negotiation Counter-Offer Email & Executive Reports
 Generate negotiation-ready correspondence and exportable compliance documents.
 
-![Export and Email](docs/screenshots/export_and_email.png)
+![Export and Email](./contractguard/docs/screenshots/export_and_email.png)
 
 *Key Highlights:*
 - Automatically formats professional, diplomatic counter-offer emails.
@@ -134,7 +134,7 @@ Generate negotiation-ready correspondence and exportable compliance documents.
 ### 7. End-to-End System Architecture Diagram
 A visual blueprint illustrating how the frontend, API, deterministic engine, vector RAG, and LangGraph stateful agent coordinate.
 
-![System Architecture](docs/screenshots/architecture_diagram.png)
+![System Architecture](./contractguard/docs/screenshots/architecture_diagram.png)
 
 ---
 
